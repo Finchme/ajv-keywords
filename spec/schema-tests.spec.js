@@ -17,7 +17,8 @@ var ajvs = [
     'prohibited',
     'select',
     'switch',
-    'uniqueItemProperties'
+    'uniqueItemProperties',
+    'uniqueItemCombinedProperties'
   ]),
   defineKeywords(getAjv()),
   defineKeywords(getAjv(true)),

@@ -11,6 +11,7 @@ module.exports = {
   oneRequired: require('./oneRequired'),
   prohibited: require('./prohibited'),
   uniqueItemProperties: require('./uniqueItemProperties'),
+  uniqueItemCombinedProperties: require('./uniqueItemCombinedProperties'),
   deepProperties: require('./deepProperties'),
   deepRequired: require('./deepRequired'),
   formatMinimum: require('./formatMinimum'),
