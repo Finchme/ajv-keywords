@@ -28,6 +28,7 @@ Custom JSON-Schema keywords for [Ajv](https://github.com/epoberezkin/ajv) valida
     - [transform](#transform)<sup>\*</sup>
   - [Keywords for arrays](#keywords-for-arrays)
     - [uniqueItemProperties](#uniqueitemproperties)
+    - [uniqueItemCombinedProperties](#uniqueitemcombinedproperties)
   - [Keywords for objects](#keywords-for-objects)
     - [allRequired](#allrequired)
     - [anyRequired](#anyrequired)
@@ -300,6 +301,30 @@ var invalidData2 = [
 ```
 
 This keyword is contributed by [@blainesch](https://github.com/blainesch).
+
+#### `uniqueItemCombinedProperties`
+
+The keyword allows to check that some properties in array items are unique collectively.
+
+This keyword applies only to arrays. If the data is not an array, the validation succeeds.
+
+The value of this keyword must be an array of strings - property names that should have unique values across all items. e.g. `["id", "name"]`
+
+The collective values of this keyword must be an array of comma-separated strings - property names that should have unique values across all items. e.g. `["id,name"]`
+
+```javascript
+var schema = { uniqueItemCombinedProperties: ["id,name"] };
+
+var validData = [{ id: 1 }, { id: 2 }, { id: 3 }];
+
+var invalidData = [
+  { id: 1, name: "taco" },
+  { id: 1, name: "taco" }, // duplicate "id" and "name"
+  { id: 3, name: "salsa" },
+];
+```
+
+This keyword is contributed by [@kartikeybhardwaj](https://github.com/kartikeybhardwaj).
 
 ### Keywords for objects
 
