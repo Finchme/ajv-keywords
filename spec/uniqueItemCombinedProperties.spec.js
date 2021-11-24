@@ -26,7 +26,7 @@ describe('keyword "uniqueItemCombinedProperties"', function () {
 
         error.keyword.should.equal('uniqueItemCombinedProperties');
         error.params.keyword.should.equal('uniqueItemCombinedProperties');
-        error.message.should.equal('should have unique id');
+        error.message.should.equal('should NOT have duplicate items property id (items ## 0 and 1 are identical)');
       });
     });
   });
@@ -46,7 +46,7 @@ describe('keyword "uniqueItemCombinedProperties"', function () {
 
         error.keyword.should.equal('uniqueItemCombinedProperties');
         error.params.keyword.should.equal('uniqueItemCombinedProperties');
-        error.message.should.equal('should have unique name');
+        error.message.should.equal('should NOT have duplicate items property name (items ## 0 and 1 are identical)');
       });
     });
   });

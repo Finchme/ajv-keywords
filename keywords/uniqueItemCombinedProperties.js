@@ -8,36 +8,51 @@ module.exports = function defFunc(ajv) {
     errors: true,
     compile: function (keys, parentSchema, it) {
       var equal = it.util.equal;
-      var scalar = getScalarKeys(keys, parentSchema);
+      var updated_keys = JSON.parse(JSON.stringify(keys));
+      for (var z = 0; z < updated_keys.length; z++)
+        updated_keys[z] = updated_keys[z].split(',');
+      var scalar = getScalarKeys(updated_keys, parentSchema);
 
       // eslint-disable-next-line complexity
       return function validate(data) {
         if (data.length > 1) {
-          var updated_keys = JSON.parse(JSON.stringify(keys));
-          for (var z = 0; z < updated_keys.length; z++)
-            updated_keys[z] = updated_keys[z].split(',');
           for (var k = 0; k < updated_keys.length; k++) {
-            for (var m = 0; m < updated_keys[k].length; m++) {
-              var i, key = updated_keys[k][m];
-              if (scalar[k][m]) {
-                var hash = {};
-                for (i = data.length; i--;) {
-                  if (!data[i] || typeof data[i] != 'object') continue;
-                  var prop = data[i][key];
-                  if (prop && typeof prop == 'object') continue;
+            var i, curr_keys = updated_keys[k];
+            if (scalar[k]) {
+              var hash = {};
+              var hash_indexes = {};
+              for (i = data.length; i--;) {
+                if (!data[i] || typeof data[i] != 'object') continue;
+                var force_break = false;
+                var prop_list = [];
+                for (var y = 0; y < curr_keys.length; y++) {
+                  var prop = data[i][curr_keys[y]];
+                  if (prop && typeof prop == 'object') { force_break = true; continue; }
                   if (typeof prop == 'string') prop = '"' + prop;
-                  if (hash[prop]) {
-                    validate.errors = constructError(key);
-                    return false;
-                  }
-                  hash[prop] = true;
+                  prop_list.push(prop);
                 }
-              } else {
-                for (i = data.length; i--;) {
-                  if (!data[i] || typeof data[i] != 'object') continue;
-                  for (var j = i; j--;) {
-                    if (data[j] && typeof data[j] == 'object' && equal(data[i][key], data[j][key])) {
-                      validate.errors = constructError(keys[k]);
+                if (force_break) continue;
+                if (hash[prop_list]) {
+                  validate.errors = constructError(curr_keys, [i, hash_indexes[prop_list]]);
+                  return false;
+                }
+                hash[prop_list] = true;
+                hash_indexes[prop_list] = i;
+              }
+            } else {
+              for (i = data.length; i--;) {
+                if (!data[i] || typeof data[i] != 'object') continue;
+                for (var j = i; j--;) {
+                  if (data[j] && typeof data[j] == 'object') {
+                    var is_match = true;
+                    for (var x = 0; x < curr_keys.length; x++) {
+                      if (!equal(data[i][curr_keys[x]], data[j][curr_keys[x]])) {
+                        is_match = false;
+                        break;
+                      }
+                    }
+                    if (is_match) {
+                      validate.errors = constructError(curr_keys, [j, i]);
                       return false;
                     }
                   }
@@ -71,11 +86,11 @@ function getScalarKeys(keys, schema) {
 }
 
 
-function constructError(keys) {
+function constructError(keys, indexes) {
   const keyword = 'uniqueItemCombinedProperties';
   return [{
     keyword,
     params: { keyword },
-    message: 'should have unique ' + keys,
+    message: 'should NOT have duplicate items property ' + keys + ' (items ## ' + indexes.join(' and ') + ' are identical)',
   }];
 }
