@@ -8,10 +8,11 @@ export default function getDef(): FuncKeywordDefinition {
     keyword: "uniqueItemProperties",
     type: "array",
     schemaType: "array",
+    errors: true,
     compile(keys: string[], parentSchema: AnySchemaObject) {
       const scalar = getScalarKeys(keys, parentSchema)
 
-      return (data) => {
+      return function validate(data): boolean {
         if (data.length <= 1) return true
         for (let k = 0; k < keys.length; k++) {
           const key = keys[k]
@@ -22,7 +23,10 @@ export default function getDef(): FuncKeywordDefinition {
               let p = x[key]
               if (p && typeof p == "object") continue
               if (typeof p == "string") p = '"' + p
-              if (hash[p]) return false
+              if (hash[p]) {
+                ;(validate as any).errors = constructError(key)
+                return false
+              }
               hash[p] = true
             }
           } else {
@@ -31,7 +35,10 @@ export default function getDef(): FuncKeywordDefinition {
               if (!x || typeof x != "object") continue
               for (let j = i; j--; ) {
                 const y = data[j]
-                if (y && typeof y == "object" && equal(x[key], y[key])) return false
+                if (y && typeof y == "object" && equal(x[key], y[key])) {
+                  ;(validate as any).errors = constructError(key)
+                  return false
+                }
               }
             }
           }
@@ -53,6 +60,17 @@ function getScalarKeys(keys: string[], schema: AnySchemaObject): boolean[] {
       ? !t.includes("object") && !t.includes("array")
       : SCALAR_TYPES.includes(t)
   })
+}
+
+function constructError(key: string): any {
+  const keyword = "uniqueItemProperties"
+  return [
+    {
+      keyword,
+      params: {keyword},
+      message: "should have unique " + key,
+    },
+  ]
 }
 
 module.exports = getDef

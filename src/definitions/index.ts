@@ -6,6 +6,7 @@ import range from "./range"
 import exclusiveRange from "./exclusiveRange"
 import regexp from "./regexp"
 import transform from "./transform"
+import uniqueItemCombinedProperties from "./uniqueItemCombinedProperties"
 import uniqueItemProperties from "./uniqueItemProperties"
 import allRequired from "./allRequired"
 import anyRequired from "./anyRequired"
@@ -25,6 +26,7 @@ const definitions: GetDefinition<KeywordDefinition>[] = [
   regexp,
   transform,
   uniqueItemProperties,
+  uniqueItemCombinedProperties,
   allRequired,
   anyRequired,
   oneRequired,
@@ -56,6 +58,7 @@ export type AjvKeywordsError =
       | "regexp"
       | "transform"
       | "uniqueItemProperties"
+      | "uniqueItemCombinedProperties"
     >
 
 module.exports = ajvKeywords

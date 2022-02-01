@@ -26,7 +26,8 @@ Custom JSON-Schema keywords for [Ajv](https://github.com/epoberezkin/ajv) valida
     - [regexp](#regexp)
     - [transform](#transform)<sup>\*</sup>
   - [Keywords for arrays](#keywords-for-arrays)
-    - [uniqueItemProperties](#uniqueitemproperties)<sup>\+</sup>
+    - [uniqueItemProperties](#uniqueitemproperties)
+    - [uniqueItemCombinedProperties](#uniqueitemcombinedproperties)
   - [Keywords for objects](#keywords-for-objects)
     - [allRequired](#allrequired)
     - [anyRequired](#anyrequired)
@@ -296,6 +297,30 @@ const invalidData2 = [
 This keyword is contributed by [@blainesch](https://github.com/blainesch).
 
 **Please note**: currently `uniqueItemProperties` is not supported in [standalone validation code](https://github.com/ajv-validator/ajv/blob/master/docs/standalone.md) - it has to be implemented as [`code` keyword](https://github.com/ajv-validator/ajv/blob/master/docs/keywords.md#define-keyword-with-code-generation-function) to support it (PR is welcome).
+
+#### `uniqueItemCombinedProperties`
+
+The keyword allows to check that some properties in array items are unique collectively.
+
+This keyword applies only to arrays. If the data is not an array, the validation succeeds.
+
+The value of this keyword must be an array of strings - property names that should have unique values across all items. e.g. `["id", "name"]`
+
+The collective values of this keyword must be an array of comma-separated strings - property names that should have unique values across all items. e.g. `["id,name"]`
+
+```javascript
+const schema = { uniqueItemCombinedProperties: ["id,name"] };
+
+const validData = [{ id: 1 }, { id: 2 }, { id: 3 }];
+
+const invalidData = [
+  { id: 1, name: "taco" },
+  { id: 1, name: "taco" }, // duplicate "id" and "name"
+  { id: 3, name: "salsa" },
+];
+```
+
+This keyword is contributed by [@kartikeybhardwaj](https://github.com/kartikeybhardwaj).
 
 ### Keywords for objects
 

@@ -6,6 +6,7 @@ const jsonSchemaTest = require("json-schema-test")
 
 const ajvs = [
   ajvKeywordsPlugin(getAjv(), [
+    "uniqueItemCombinedProperties",
     "uniqueItemProperties",
     "allRequired",
     "anyRequired",

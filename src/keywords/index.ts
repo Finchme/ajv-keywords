@@ -5,6 +5,7 @@ import range from "./range"
 import exclusiveRange from "./exclusiveRange"
 import regexp from "./regexp"
 import transform from "./transform"
+import uniqueItemCombinedProperties from "./uniqueItemCombinedProperties"
 import uniqueItemProperties from "./uniqueItemProperties"
 import allRequired from "./allRequired"
 import anyRequired from "./anyRequired"
@@ -24,6 +25,7 @@ const ajvKeywords: Record<string, Plugin<any> | undefined> = {
   exclusiveRange,
   regexp,
   transform,
+  uniqueItemCombinedProperties,
   uniqueItemProperties,
   allRequired,
   anyRequired,
